@@ -1,0 +1,18 @@
+name: Docker_Images--ansible-panos
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file docker_images/palo_alto_ansible/Dockerfile --tag tpeterson/ansible-panos:${{ github.run_id }} --tag tpeterson66/ansible-panos:latest
