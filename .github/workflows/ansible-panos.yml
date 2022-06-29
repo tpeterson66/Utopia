@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: .
+          # context: .
             # platforms: linux/amd64,linux/arm64
-          file: /docker_images/palo_alto_ansible
+          file: /docker_images/palo_alto_ansible/Dockerfile
           tags: tpeterson/ansible-panos:${{ github.run_id }}, tpeterson/ansible-panos:latest
