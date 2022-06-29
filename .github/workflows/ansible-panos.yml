@@ -27,4 +27,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
+          file: docker_umages/palo_alto-ansible/Dockerfile
           tags: tpeterson/ansible-panos:${{ github.run_id }}, tpeterson/ansible-panos:latest
