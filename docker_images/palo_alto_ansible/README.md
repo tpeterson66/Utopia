@@ -1,5 +1,11 @@
 # Docker Image - Palo Alto Ansible
 
+## Docker Hub
+
+<https://hub.docker.com/repository/docker/tpeterson66/ansible-panos>
+
+## General Notes
+
 Ansible is a powerful desired state configuration (DSC) tool which can be used to configure multiple components within the environment. This image was created to install all the required components allowing engineers to use this image to run ansible playbooks against their Palo Alto firewalls. It can also be expanded to include other galaxy projects as well.
 
 If you want to build this image on your local machine to add additional software or tools, the following steps can be used to get started on your own machine. This assumes you already have Docker Desktop installed or access to a docker host.
