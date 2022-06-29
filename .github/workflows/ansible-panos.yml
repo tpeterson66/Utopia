@@ -25,7 +25,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build
+        uses: docker/build-push-action@v3
+        with:
+          # push: true
+          # context: .
+            # platforms: linux/amd64,linux/arm64
+          file: /docker_images/palo_alto_ansible/Dockerfile
+          tags: tpeterson66/ansible-panos:${{ github.run_id }}, tpeterson66/ansible-panos:latest
+      - 
+        name: Run Docker Scan
+        run: docker scan --accept-license tpeterson66/ansible-panos:${{ github.run_id }}
+        shell: bash
+      -
+        name: Push to Docker Hub
         uses: docker/build-push-action@v3
         with:
           push: true
