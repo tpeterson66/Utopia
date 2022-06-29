@@ -5,6 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  paths:
+    - docker_images/palo_alto_ansible/**
 
 jobs:
   docker:
