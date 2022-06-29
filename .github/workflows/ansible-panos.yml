@@ -3,8 +3,10 @@ name: Docker_Images--ansible-panos
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths:
+      - 'docker_images/palo_alto_ansible/**'
+  # pull_request:
+  #   branches: [ "main" ]
 
 jobs:
   docker:
