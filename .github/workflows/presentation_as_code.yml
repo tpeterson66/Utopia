@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         run: hugo --minify
-        working-directory: /presentation_as_code/slides
+        working-directory: ./presentations_as_code/slides
         shell: bash
 
       # - name: Deploy
