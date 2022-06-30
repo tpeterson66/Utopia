@@ -38,6 +38,10 @@ spec:
       targetPort: 9376
 ```
 
+{{% note %}}
+Don't forget to explain what the service is doing!
+{{% /note %}}
+
 ---
   
 <!-- {{< slide id="hello" background="#7d64ff" transition="zoom" transition-speed="slow" >}}
