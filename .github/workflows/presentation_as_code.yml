@@ -25,6 +25,8 @@ jobs:
 
       - name: Build
         run: hugo --minify
+        shell: presentation_as_code/slides
+        shell: bash
 
       # - name: Deploy
       #   uses: peaceiris/actions-gh-pages@v3
