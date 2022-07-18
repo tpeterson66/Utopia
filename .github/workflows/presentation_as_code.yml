@@ -1,0 +1,42 @@
+name: Presentations-as-Code
+
+on:
+  push:
+    branches:
+      - main
+      - presentations_as_code
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.91.2'
+          # extended: true
+
+      - name: Build
+        run: hugo --minify
+        working-directory: ./presentations_as_code/slides
+        shell: bash
+
+      - name: Deploy
+        id: deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          # repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations ######
+          app_location: "presentations_as_code/slides" # App source code path relative to repository root
+          # api_location: "api" # Api source code path relative to repository root - optional
+          output_location: "public" # Built app content directory, relative to app_location - optional
+          ###### End of Repository/Build Configurations ######
