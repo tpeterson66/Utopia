@@ -30,6 +30,11 @@ RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt update
 RUN apt install python3.8
 
+# NodeJS
+RUN curl -sL https://deb.nodesource.com/setup_17.x -o /tmp/nodesource_setup.sh
+RUN bash /tmp/nodesource_setup.sh
+RUN apt install nodejs
+
 # Powershell
 # Download the Microsoft repository GPG keys
 RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
