@@ -29,5 +29,5 @@ jobs:
           push: true
           context: ${{ env.GITHUB_WORKSPACE }}/docker_images/azure-devops
             # platforms: linux/amd64,linux/arm64
-          file: Dockerfile
+          file: /docker_images/azure-devops/Dockerfile
           tags: tpeterson66/azure-devops:${{ github.run_id }}, tpeterson66/azure-devops:latest
