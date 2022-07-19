@@ -25,6 +25,11 @@ RUN apt-get update \
 # Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
+# Python
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt update
+RUN apt install python3.8
+
 # Powershell
 # Download the Microsoft repository GPG keys
 RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
