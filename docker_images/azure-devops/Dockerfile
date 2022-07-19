@@ -59,6 +59,7 @@ RUN apt-get install -y kubectl
 
 WORKDIR /azp
 
+# need to adjust for your folder structure...
 COPY /docker_images/azure-devops/start.sh .
 RUN chmod +x start.sh
 
