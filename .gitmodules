@@ -1,4 +1,4 @@
 [submodule "presentations_as_code/slides/themes/reveal-hugo"]
 	path = presentations_as_code/slides/themes/reveal-hugo
 	# url = git@github.com:dzello/reveal-hugo.git # using the public url instead of this git url.
-	url = https://github.com/webhat/example.git
+	url = https://github.com/dzello/reveal-hugo.git
