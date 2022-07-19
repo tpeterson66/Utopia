@@ -2,7 +2,7 @@ name: Docker_Images--azure-devops
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "azdo-build-agents" ]
     paths:
       - 'docker_images/azure-devops/**'
 
