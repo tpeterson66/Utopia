@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: $GITHUB_WORKSPACE/docker_images/azure-devops
+          context: ${{ env.GITHUB_WORKSPACE }}/docker_images/azure-devops
             # platforms: linux/amd64,linux/arm64
           file: Dockerfile
           tags: tpeterson66/azure-devops:${{ github.run_id }}, tpeterson66/azure-devops:latest
