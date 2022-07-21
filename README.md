@@ -45,3 +45,24 @@ Azure Container Registry
 
 Terraform - Managed Identities
 <https://faun.pub/managed-identities-in-azure-with-terraform-28ca062ab786>
+
+Palo Gateway Load Balancer Notes
+<https://docs.paloaltonetworks.com/vm-series/10-1/vm-series-deployment/set-up-the-vm-series-firewall-on-azure/deploy-the-vm-series-firewall-with-the-azure-gwlb>
+<https://www.paloaltonetworks.com/resources/guides/azure-architecture-guide>
+<https://github.com/PaloAltoNetworks/Azure-GWLB>
+
+Home Project Stuff
+<https://www.casaos.io/>
+<https://nicolevanderhoeven.com/blog/20210302-presentation-slides-as-code/>
+<https://reveal-hugo.dzello.com/logo-example/#/2>
+
+Preso as code
+<https://slides.nicolevanderhoeven.com/sample/#/6>
+<https://revealjs.com/speaker-view/>
+<https://gohugo.io/getting-started/configuration/>
+<https://github.com/peaceiris/actions-hugo>
+<https://gohugo.io/getting-started/installing/>
+<https://gohugo.io/commands/hugo/>
+
+Boards as Code
+<https://docs.microsoft.com/en-us/cli/azure/boards/work-item/relation?view=azure-cli-latest#az-boards-work-item-relation-add>
