@@ -29,6 +29,12 @@ resource "azurerm_lb_backend_address_pool" "consumer" {
   name            = "BackEndAddressPool"
 }
 
+resource "azurerm_network_interface_backend_address_pool_association" "consumer" {
+  network_interface_id    = azurerm_network_interface.consumer.id
+  ip_configuration_name   = "internal"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.consumer.id
+}
+
 resource "azurerm_lb_rule" "consumer" {
   loadbalancer_id                = azurerm_lb.consumer.id
   name                           = "LBRule"
@@ -36,6 +42,7 @@ resource "azurerm_lb_rule" "consumer" {
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids = [azurerm_lb_backend_address_pool.consumer.id]
 }
 
 resource "azurerm_virtual_network" "consumer" {
@@ -88,3 +95,4 @@ resource "azurerm_linux_virtual_machine" "consumer" {
     version   = "latest"
   }
 }
+

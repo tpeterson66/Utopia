@@ -51,6 +51,9 @@ Palo Gateway Load Balancer Notes
 <https://www.paloaltonetworks.com/resources/guides/azure-architecture-guide>
 <https://github.com/PaloAltoNetworks/Azure-GWLB>
 
+Palo Recommended Versions
+<https://live.paloaltonetworks.com/t5/customer-resources/support-pan-os-software-release-guidance/ta-p/258304>
+
 Home Project Stuff
 <https://www.casaos.io/>
 <https://nicolevanderhoeven.com/blog/20210302-presentation-slides-as-code/>
