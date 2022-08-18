@@ -20,7 +20,7 @@ You can see from the log that the default behavior of Application Gateway is to 
 
 Here is a screenshot AFTER adding the Application Gateway Rewrite Set:
 
-![AppGatewayRule1](appgw-rewrite-rule1.png)
+![AppGatewayRule2](appgw-rewrite-rule2.png)
 
 Here is this screenshot, you can see the value of the X-Forwarded-For header is set to `162.197.xxx.xxx`, which is just the test server IP address. The traffic was hitting the ssame endpoint and the traffic is still actually coming from the Application Gateway backend pool.
 
