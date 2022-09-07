@@ -1,27 +1,26 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
-# To make it easier for build and release pipelines to run apt-get,
-# configure apt to not require confirmation (assume the -y argument by default)
-ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+    apt-transport-https \
+    apt-utils \
+    ca-certificates \
+    curl \
+    git \
+    iputils-ping \
+    jq \
+    lsb-release \
+    software-properties-common \
+    wget \
+    unzip
 
-RUN apt-get update \
-&& apt-get install -y --no-install-recommends \
-        ca-certificates \
-        apt-utils \
-        curl \
-        jq \
-        git \
-        iputils-ping \
-        libcurl4 \
-        libicu60 \
-        libunwind8 \
-        netcat \
-        libssl1.0 \
-        unzip \
-        apt-transport-https \
-        software-properties-common \
-        wget
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+# Can be 'linux-x64', 'linux-arm64', 'linux-arm', 'rhel.6-x64'.
+ENV TARGETARCH=linux-x64
+
+WORKDIR /azp
 # Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
@@ -67,10 +66,11 @@ RUN apt-get update
 RUN apt-get install -y kubectl
 
 
-WORKDIR /azp
+# WORKDIR /azp
 
 # need to adjust for your folder structure...
 COPY /docker_images/azure-devops/start.sh .
 RUN chmod +x start.sh
 
-CMD ["./start.sh"]
+ENTRYPOINT [ "./start.sh" ]
+# CMD ["./start.sh"]
