@@ -64,7 +64,7 @@ resource "azurerm_network_interface" "trust" {
   name                = "${local.trust_nic_name}-${count.index + 1}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  enable_accelerated_networking = true
+  # enable_accelerated_networking = true
   enable_ip_forwarding = true
 
   ip_configuration {
@@ -78,7 +78,7 @@ resource "azurerm_network_interface" "untrust" {
   name                = "${local.untrust_nic_name}-${count.index + 1}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  enable_accelerated_networking = true
+  # enable_accelerated_networking = true
   enable_ip_forwarding = true
 
   ip_configuration {

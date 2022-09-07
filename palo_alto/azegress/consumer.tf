@@ -50,14 +50,44 @@ resource "azurerm_subnet_network_security_group_association" "default1" {
   network_security_group_id = azurerm_network_security_group.default1.id
 }
 
+# deny rule to block traffic to default2
+resource "azurerm_network_security_rule" "default1" {
+  name                        = "Deny_Traffic_Default2"
+  priority                    = 100
+  direction                   = "Outbound"
+  access                      = "Deny"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "10.66.69.0/25" # default 1
+  destination_address_prefix  = "10.66.69.128/25" # default 2
+  resource_group_name         = azurerm_resource_group.consumer.name
+  network_security_group_name = azurerm_network_security_group.default1.name
+}
+
 resource "azurerm_network_security_group" "default2" {
   name                = "consumer-default2-nsg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.consumer.location
+  resource_group_name = azurerm_resource_group.consumer.name
 }
 resource "azurerm_subnet_network_security_group_association" "default2" {
   subnet_id                 = azurerm_subnet.default2.id
   network_security_group_id = azurerm_network_security_group.default2.id
+}
+
+# deny rule to block traffic to default1
+resource "azurerm_network_security_rule" "default2" {
+  name                        = "Deny_Traffic_Default1"
+  priority                    = 100
+  direction                   = "Outbound"
+  access                      = "Deny"
+  protocol                    = "*"
+  source_port_range           = "*"
+  destination_port_range      = "*"
+  source_address_prefix       = "10.66.69.128/25" # default 2
+  destination_address_prefix  = "10.66.69.0/25" # default 1
+  resource_group_name         = azurerm_resource_group.consumer.name
+  network_security_group_name = azurerm_network_security_group.default2.name
 }
 
 # route tables

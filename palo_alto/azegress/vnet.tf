@@ -23,9 +23,9 @@ variable "loadbalancer_subnet" {
   description = "Address prefix for the untrust network"
 }
 
-variable "management_public_ip" {
+variable "management_public_ips" {
   description = "Public IP address to manage the firewalls"
-  type        = string
+  type        = list(string)
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -73,7 +73,7 @@ resource "azurerm_network_security_group" "mgmt" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = var.management_public_ip
+    source_address_prefixes      = var.management_public_ips
     destination_address_prefix = "*"
   }
   security_rule {
@@ -84,7 +84,7 @@ resource "azurerm_network_security_group" "mgmt" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = var.management_public_ip
+    source_address_prefixes      = var.management_public_ips
     destination_address_prefix = "*"
   }
 }
