@@ -7,6 +7,14 @@ variable "data_nic_name" {
   type        = string
   description = "Name of the data nic"
 }
+variable "trust_nic_name" {
+  type        = string
+  description = "Name of the trust nic"
+}
+variable "untrust_nic_name" {
+  type        = string
+  description = "Name of the untrust nic"
+}
 
 variable "firewall_name" {
   type        = string
@@ -42,15 +50,17 @@ variable "palo_version" {
 }
 
 resource "azurerm_public_ip" "mgmt" {
-  name                = var.management_nic_name
+  count = 2
+  name                = "${var.management_nic_name}-${count.index + 1}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   allocation_method   = "Static"
-  sku = "Standard"
+  sku                 = "Standard"
 }
 
 resource "azurerm_network_interface" "mgmt" {
-  name                = var.management_nic_name
+  count = 2
+  name                = "${var.management_nic_name}-${count.index + 1}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -58,11 +68,12 @@ resource "azurerm_network_interface" "mgmt" {
     name                          = "ipconfig"
     subnet_id                     = azurerm_subnet.mgmt.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.mgmt.id
+    public_ip_address_id          = azurerm_public_ip.mgmt[count.index].id
   }
 }
 resource "azurerm_network_interface" "data" {
-  name                = var.data_nic_name
+  count = 2
+  name                = "${var.data_nic_name}-${count.index + 1}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -72,9 +83,32 @@ resource "azurerm_network_interface" "data" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+# resource "azurerm_network_interface" "trust" {
+#   name                = var.trust_nic_name
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+
+#   ip_configuration {
+#     name                          = "ipconfig"
+#     subnet_id                     = azurerm_subnet.trust.id
+#     private_ip_address_allocation = "Dynamic"
+#   }
+# }
+# resource "azurerm_network_interface" "untrust" {
+#   name                = var.untrust_nic_name
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+
+#   ip_configuration {
+#     name                          = "ipconfig"
+#     subnet_id                     = azurerm_subnet.untrust.id
+#     private_ip_address_allocation = "Dynamic"
+#   }
+# }
 
 resource "azurerm_linux_virtual_machine" "firewall" {
-  name                            = var.firewall_name
+  count = 2
+  name                            = "${var.firewall_name}-${count.index + 1}"
   resource_group_name             = azurerm_resource_group.rg.name
   location                        = azurerm_resource_group.rg.location
   size                            = "Standard_D3_v2"
@@ -84,8 +118,10 @@ resource "azurerm_linux_virtual_machine" "firewall" {
 
   custom_data = var.custom_data
   network_interface_ids = [
-    azurerm_network_interface.mgmt.id,
-    azurerm_network_interface.data.id
+    azurerm_network_interface.mgmt[count.index].id,
+    azurerm_network_interface.data[count.index].id,
+    # azurerm_network_interface.trust.id,
+    # azurerm_network_interface.untrust.id
   ]
   os_disk {
     caching              = "ReadWrite"
@@ -106,7 +142,8 @@ resource "azurerm_linux_virtual_machine" "firewall" {
 }
 
 resource "azurerm_network_interface_backend_address_pool_association" "internal_pri" {
-  network_interface_id    = azurerm_network_interface.data.id
+  count =  2
+  network_interface_id    = azurerm_network_interface.data[count.index].id
   ip_configuration_name   = "ipconfig"
   backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
 }

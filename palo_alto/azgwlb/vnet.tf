@@ -14,6 +14,14 @@ variable "data_subnet" {
   type        = list(string)
   description = "Address prefix for the data network"
 }
+variable "trust_subnet" {
+  type        = list(string)
+  description = "Address prefix for the trust network"
+}
+variable "untrust_subnet" {
+  type        = list(string)
+  description = "Address prefix for the untrust network"
+}
 
 resource "azurerm_virtual_network" "vnet" {
   name                = var.vnet_name
@@ -33,6 +41,18 @@ resource "azurerm_subnet" "data" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = var.data_subnet
+}
+resource "azurerm_subnet" "trust" {
+  name                 = "trust"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.trust_subnet
+}
+resource "azurerm_subnet" "untrust" {
+  name                 = "untrust"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = var.untrust_subnet
 }
 
 resource "azurerm_network_security_group" "mgmt" {

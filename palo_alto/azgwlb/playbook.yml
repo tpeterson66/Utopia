@@ -96,16 +96,16 @@
       zone_name: "untrust"
       # vlan_name: "myVlan"
 
-  # - name: Configure Untrust Network Interface
-  #   panos_interface:
-  #     provider: '{{ provider }}'
-  #     if_name: "ethernet1/1"
-  #     zone_name: "untrust"
-  #     vr_name: "untrust"
-  #     mode: "layer3"
-  #     link_state: "auto"
-  #     enable_dhcp: false
-  #     ip: '{{ untrust_ips }}'
+  - name: Configure Untrust Network Interface
+    panos_interface:
+      provider: '{{ provider }}'
+      if_name: "ethernet1/3"
+      zone_name: "untrust"
+      vr_name: "untrust"
+      mode: "layer3"
+      link_state: "auto"
+      enable_dhcp: false
+      ip: '{{ untrust_ips }}'
   # - name: Configure Trust Network Interface
   #   panos_interface:
   #     provider: '{{ provider }}'
