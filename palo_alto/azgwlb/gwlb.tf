@@ -49,5 +49,5 @@ resource "azurerm_lb_rule" "gwlb_rule" {
   backend_port                   = 0
   frontend_ip_configuration_name = "gateway_load_balancer"
   probe_id                       = azurerm_lb_probe.probe.id
-  backend_address_pool_ids = [azurerm_lb_backend_address_pool.backend_pool.id]
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.id]
 }

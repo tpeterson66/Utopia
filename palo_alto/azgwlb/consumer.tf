@@ -8,14 +8,14 @@ resource "azurerm_public_ip" "consumer" {
   location            = var.location
   resource_group_name = azurerm_resource_group.consumer.name
   allocation_method   = "Static"
-  sku = "Standard"
+  sku                 = "Standard"
 }
 
 resource "azurerm_lb" "consumer" {
   name                = "TestLoadBalancer"
   location            = azurerm_resource_group.consumer.location
   resource_group_name = azurerm_resource_group.consumer.name
-  sku = "Standard"
+  sku                 = "Standard"
 
   frontend_ip_configuration {
     name                                               = "PublicIPAddress"
@@ -42,7 +42,7 @@ resource "azurerm_lb_rule" "consumer" {
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
-  backend_address_pool_ids = [azurerm_lb_backend_address_pool.consumer.id]
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.consumer.id]
 }
 
 resource "azurerm_virtual_network" "consumer" {
@@ -96,3 +96,7 @@ resource "azurerm_linux_virtual_machine" "consumer" {
   }
 }
 
+
+## Add health Probe...
+
+## Configure the VM for nginx
