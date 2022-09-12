@@ -1,6 +1,10 @@
 **/.terraform/*
 **/.terraform.lock.hcl
 
+**/provider.json
+
+
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
