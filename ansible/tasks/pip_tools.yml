@@ -10,7 +10,7 @@
     path=/root/.bashrc
     line=eval "$(thefuck --alias)"
     owner={{ansible_user}}
-    # regexp='^alias k='kubectl'$'
+    regexp='^eval "$(thefuck --alias)"$'
     state=present
     insertafter=EOF
     create=True
