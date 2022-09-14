@@ -1,0 +1,16 @@
+---
+# https://hub.docker.com/r/ansible/ansible
+- name: Pull default Docker image
+  docker_image:
+    name: "portainer/portainer-ce:latest"
+    source: pull
+
+# https://docs.ansible.com/ansible/2.9/modules/docker_container_module.html
+- name: Create Portainer
+  docker_container:
+    name: "portainer"
+    image: "portainer/portainer-ce:latest"
+    published_ports: ["9443:9443","9000:9000"]
+    restart_policy: "unless-stopped"
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    state: started
