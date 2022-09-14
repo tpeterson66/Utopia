@@ -4,3 +4,7 @@
     name: thefuck
     state: present
     executable: pip3
+
+- name: Add alias for fuck
+  lineinfile:
+    eval "$(thefuck --alias)"
