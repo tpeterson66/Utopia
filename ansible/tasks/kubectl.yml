@@ -44,3 +44,10 @@
 - name: Run Helm install Script.
   ansible.builtin.command: echo "source <(kubectl completion bash)" >> ~/.bashrc
   when: kubectl_command_results.rc == 1
+
+- name: Deploy K9s.
+  community.general.pacman:
+    name:
+      - K9s
+    state: present
+  when: ansible_facts.os_family == "Archlinux"
