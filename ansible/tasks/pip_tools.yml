@@ -7,4 +7,10 @@
 
 - name: Add alias for fuck
   lineinfile:
-    eval "$(thefuck --alias)"
+    path=/root/.bashrc
+    line=eval "$(thefuck --alias)"
+    owner={{ansible_user}}
+    # regexp='^alias k='kubectl'$'
+    state=present
+    insertafter=EOF
+    create=True
