@@ -1,0 +1,18 @@
+---
+- name: Check if Azure CLI is installed.
+  ansible.builtin.command: which az
+  failed_when: false
+  changed_when: false
+  check_mode: false
+  register: azcli_command_results
+
+- name: Download Azure CLI Install Script.
+  ansible.builtin.get_url:
+    url: https://aka.ms/InstallAzureCLIDeb
+    dest: /tmp/get_azcli.sh
+    mode: 0775
+  when: azcli_command_results.rc == 1
+
+- name: Run Helm install Script.
+  ansible.builtin.command: /tmp/get_azcli.sh
+  when: azcli_command_results.rc == 1
