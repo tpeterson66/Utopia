@@ -4,13 +4,3 @@
     name: thefuck
     state: present
     executable: pip3
-
-- name: Add alias for fuck
-  lineinfile:
-    path=/root/.bashrc
-    line=eval "$(thefuck --alias)"
-    owner={{ansible_user}}
-    regexp='^eval "$(thefuck --alias)"$'
-    state=present
-    insertafter=EOF
-    create=True
