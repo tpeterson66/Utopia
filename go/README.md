@@ -369,7 +369,6 @@ for _, user := range users {
 
 Interfaces are used to define how a specific item should look and can include specific methods which must exists for the type as well.
 
-
 Here is one example of using an Interface; notice the inline comments to follow best practices
 
 It is a best practice to pass a reference to the methods/functions using the interface thus requiring each of those methods of functions to use a receiver.
@@ -379,37 +378,270 @@ package main
 
 import "fmt"
 
-type Animal interface {
-	Says() string
-	NumberOfLegs() int
+type Animal interface { // define the interface and the required methods to conform
+  Says() string
+  NumberOfLegs() int
 }
 
-type Dog struct {
-	Name  string
-	Breed string
+type Dog struct { // create a new type, which later, will need to be coded to support the interface
+  Name  string
+  Breed string
 }
 
-func main() {
-	dog := Dog{
-		Name:  "Samson",
-		Breed: "German Shepherd",
-	}
+func main() { // create a new var using the type
+  dog := Dog{
+    Name:  "Samson",
+    Breed: "German Shepherd",
+  }
 
-	PrintInfo(&dog) // best practice to use a reference and pass this to the receiver
+  PrintInfo(&dog) // best practice to use a reference and pass this to the receiver
 
 }
 
 func PrintInfo(a Animal) {
-	fmt.Println("This animal says", a.Says(), "and has", a.NumberOfLegs(), "legs")
+  fmt.Println("This animal says", a.Says(), "and has", a.NumberOfLegs(), "legs")
 }
 
+// add the supported methods to the type to satisfy the interface
 func (d *Dog) Says() string { // should use a receiver
-	return "Woof!"
+  return "Woof!"
 }
 func (d *Dog) NumberOfLegs() int { // should use a receiver
-	return 4
+  return 4
 }
 ```
 
 In order for something to implement an interface, it must...
 Implement the same functions as the interface in questions
+
+### Packages
+
+Creating custom packages;
+
+Run `go mod init github.com/tpeterson66/myniceprogram` which creates a `go.mod` file in the project directory.
+
+#### go.mod
+
+```go
+module github.com/tpeterson66/myniceprogram
+
+go 1.19
+```
+
+#### Main file
+
+```go
+package main
+
+import (
+  "github.com/tpeterson66/myniceprogram/helpers"
+  "log"
+)
+
+func main() {
+  log.Println("Hello World!")
+
+  var myVar helpers.SomeType
+  myVar.TypeName = "SomeTypeName"
+  log.Println(myVar.TypeName)
+}
+```
+
+#### helpers/helpers.go
+
+```go
+package helpers
+
+type SomeType struct {
+  TypeName string
+  TyperNumber int
+}
+```
+
+### Channels
+
+Used for passing information from package to another. Need more details and notes here:
+<https://go.dev/tour/concurrency/2>
+
+#### main.go
+
+```go
+package main
+
+import (
+  "log"
+  "github.com/tpeterson66/myniceprogram/helpers"
+)
+
+const numberPool = 20 // const value
+
+func CalculateValue(intChan chan int) {
+  randomNumber := helpers.RandomNumber(numberPool) // calling the RandomNumber function from helpers
+  intChan <- randomNumber // send random number to channel
+}
+
+func main() {
+  intChan := make(chan int) // channel that can only hold int(s)
+  defer close(intChan) // when finished running, close the channel
+
+  go CalculateValue(intChan) // fire off a new go routine (concurrent) passing the intChan channel
+
+  num := <-intChan // wait for a response to the channel 
+  log.Println(num) // print it out
+}
+```
+
+#### helpers.go
+
+```go
+package helpers
+
+import (
+  "math/rand"
+  "time"
+)
+
+func RandomNumber(n int) int { // new function expecting an int and returning an int
+  rand.Seed(time.Now().UnixMicro()) // seed the random function
+  value := rand.Intn(n) // create random value
+  return value // return it
+}
+```
+
+### Reading and Writting JSON
+
+```go
+package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "log"
+)
+
+// created to match json elements to a struct property
+type Person struct {
+  First_name string `json:"first_name"`
+  Last_name  string `json:"last_name"`
+  Hair_color string `json:"hair_color"`
+  Has_dog    bool   `json:"has_dog"`
+}
+
+func main() {
+  // Sample JSON, array of objects...
+  myJson := `
+  [
+    {
+      "first_name": "Peter",
+      "last_name": "Griffin",
+      "hair_color": "black",
+      "has_dog": true
+    },
+    {
+      "first_name": "Lois",
+      "last_name": "Griffin",
+      "hair_color": "red",
+      "has_dog": false
+    }
+  ]`
+
+  // unmarshalled = data before conversion
+  var unmarshalled []Person
+
+  // use json.Unmarshal to convert the json to a struct, requires a type to be defined and a variable w/ the type of the struct
+  err := json.Unmarshal([]byte(myJson), &unmarshalled)
+
+  if err != nil { // check for errors
+    log.Println("Error unmarshalling json", err) // log error is present
+  }
+
+  log.Printf("unmarshalled: %v", unmarshalled) // print json struct to screen
+
+  // write JSON from a struct
+
+  var mySlice []Person // create a new slice of data to form the array of the JSON
+
+  // add some structs to the array...
+  var m1 Person
+  m1.First_name = "Wally"
+  m1.Last_name = "West"
+  m1.Hair_color = "red"
+  m1.Has_dog = false
+
+  mySlice = append(mySlice, m1)
+
+  var m2 Person
+  m2.First_name = "Diana"
+  m2.Last_name = "Prince"
+  m2.Hair_color = "black"
+  m2.Has_dog = false
+
+  mySlice = append(mySlice, m2)
+
+  // convert the slice to json using json.MarshalIndent. MarshalIndent prints a formatted value vs. a full string
+  newJson, err := json.MarshalIndent(mySlice, "", "    ")
+  if err != nil { // check for error
+    log.Println("error marshalling", err)
+  }
+
+  fmt.Println(string(newJson)) // print the value of the formatted JSON value
+}
+```
+
+### Writting Tests in Go
+
+
+Export the results of the tests to html to see test coverage using `go test -coverprofile=coverage.out && go tool cover -html=coverage.out`
+
+```go
+package main
+
+import "testing" // built in package
+
+func TestDivide(t *testing.T) {
+  _, err := divide(10.0, 1.0)
+  if err != nil {
+    t.Error("Got an error when we should not have...")
+  }
+}
+func TestBadDivide(t *testing.T) {
+  _, err := divide(10.0, 0)
+  if err == nil {
+    t.Error("Did not get an error when we should've gotten an error!")
+  }
+}
+```
+
+```go
+// table test
+
+var tests = []struct {
+  name     string
+  dividend float32
+  divisor  float32
+  expected float32
+  isErr    bool
+}{
+  {"valid-data", 100.0, 10.0, 10.0, false},
+  {"invalid-data", 100.0, 0.0, 0.0, true},
+}
+
+func TestDivision(t *testing.T) {
+  for _, tt := range tests {
+    got, err := divide(tt.dividend, tt.divisor)
+    if tt.isErr {
+      if err == nil {
+      t.Error("expected an error, did not get one...")
+    }
+    } else {
+      if err != nil {
+        t.Error("Did not expect an error, but got one...")
+      }
+    }
+
+    if got != tt.expected {
+      t.Errorf("Expected %f but got %f", tt.expected, got)
+    }
+  }
+}
+```
