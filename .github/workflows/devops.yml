@@ -5,6 +5,7 @@ on:
     branches: [ "main", "tpeterson66/ansible" ]
     paths:
       - 'docker_images/devops/**'
+      - '.github/workflows/devops.yml'
   # pull_request:
   #   branches: [ "main" ]
 
