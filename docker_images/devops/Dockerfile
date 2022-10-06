@@ -59,14 +59,22 @@ RUN pip install --no-cache-dir checkov==${BUILD_CHECKOV_VERSION}
 RUN checkov --version
 
 # Install terraform-docs - https://github.com/terraform-docs/terraform-docs
-RUN wget -nv -O terraform-docs https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64 \
-    && wget -nv -O terraform-docs.sha256 https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}.sha256sum \
-    && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64)" terraform-docs.sha256) terraform-docs | sha256sum -c \
-    && chmod +x terraform-docs \
-    && mv terraform-docs /usr/local/bin/terraform-docs \
-    && rm -f terraform-docs.sha256 \
-    # smoke tests
+# RUN wget -nv -O terraform-docs https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64 \
+#     && wget -nv -O terraform-docs.sha256 https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}.sha256sum \
+#     && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64)" terraform-docs.sha256) terraform-docs | sha256sum -c \
+#     && chmod +x terraform-docs \
+#     && mv terraform-docs /usr/local/bin/terraform-docs \
+#     && rm -f terraform-docs.sha256 \
+#     # smoke tests
+#     && terraform-docs --version
+
+RUN curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz \
+    tar -xzf terraform-docs.tar.gz \
+    chmod +x terraform-docs \
+    mv terraform-docs /usr/local/terraform-docs \
     && terraform-docs --version
+
+
 
 # Install tflint - https://github.com/terraform-linters/tflint
 RUN wget -nv -O tflint.key https://raw.githubusercontent.com/terraform-linters/tflint/master/8CE69160EB3F2FE9.key \
