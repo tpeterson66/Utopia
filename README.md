@@ -69,3 +69,10 @@ Preso as code
 
 Boards as Code
 <https://docs.microsoft.com/en-us/cli/azure/boards/work-item/relation?view=azure-cli-latest#az-boards-work-item-relation-add>
+
+Kubernetes Stuff:
+<https://github.com/itaysk/kubectl-neat>
+
+Code Scanning
+<https://www.zaproxy.org/docs/desktop/addons/selenium/>
+<https://www.mend.io/>
