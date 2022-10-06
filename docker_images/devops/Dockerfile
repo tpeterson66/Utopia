@@ -101,7 +101,7 @@ RUN wget -nv -O opa https://github.com/open-policy-agent/opa/releases/download/v
     && opa version
 
 # Terraform version 1.3.2
-RUN curl https://releases.hashicorp.com/terraform/1.3.2/terraform_1.3.2_linux_amd64.zip > /tmp/terraform.zip
+RUN curl https://releases.hashicorp.com/terraform/${BUILD_TERRAFORM_VERSION}/terraform_${BUILD_TERRAFORM_VERSION}_linux_amd64.zip > /tmp/terraform.zip
 RUN command unzip /tmp/terraform.zip -d /usr/local/bin/
 RUN rm -rf /tmp/terraform.zip
 RUN terraform --version
