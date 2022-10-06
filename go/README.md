@@ -86,21 +86,21 @@ Using types can reduce the number of variables required for your application. Th
 
 ```go
 type User struct {
-	FirstName   string
-	LastName    string
-	PhoneNumber string
-	Age         int
-	BirthDate time.Time
+  FirstName   string
+  LastName    string
+  PhoneNumber string
+  Age         int
+  BirthDate time.Time
 }
 
 // Calling the user type to create a variable
-	user := User {
-		FirstName: "Peter",
-		LastName: "Griffin",
-		PhoneNumber: "555-123-1234",
-		Age: 44,
-		// BirthDate time.Time
-	}
+user := User {
+  FirstName: "Peter",
+  LastName: "Griffin",
+  PhoneNumber: "555-123-1234",
+  Age: 44,
+  // BirthDate time.Time
+}
 
   // call the values using user.FirstName, user.LastName, etc.
   // if value is not defined, it returns null or default value, in the case of time.Time
@@ -138,8 +138,8 @@ log.Println("After func call myString is set to: ", myString) // print the value
 }
 
 func changeUsingPointer(s *string) { // expect a pointer to a string variable and reference it as s.
-	newValue := "Red" // store a new value as a variable in this function, could be anything
-	*s = newValue // update the pointer which was passed to the function w/ the new value
+newValue := "Red" // store a new value as a variable in this function, could be anything
+*s = newValue // update the pointer which was passed to the function w/ the new value
 }
 
 ```
@@ -156,22 +156,22 @@ package main
 import "log"
 
 type myStruct struct { // create a new type of struct
-	FirstName string
+  FirstName string
 }
 
 
 // add a reciver to a function (m *myStruct) attaching this function to the type. This does not require an argument, just uses a pointer to the current type or variable and references the data there.
 func (m *myStruct) printFirstName() string { 
-	return m.FirstName
+  return m.FirstName
 }
 
 func main() {
-	var myVar myStruct // declare variable of type myStruct
-	myVar.FirstName = "Peter" // set first name
+  var myVar myStruct // declare variable of type myStruct
+  myVar.FirstName = "Peter" // set first name
 
-	myVar2 := myStruct{ // declare a new var and set the value shorthand
-		FirstName: "Lois",
-	}
+  myVar2 := myStruct{ // declare a new var and set the value shorthand
+    FirstName: "Lois",
+  }
 
 
 	log.Println("myVar is set to: ", myVar.printFirstName() ) // call the function attached to the type to print the first name
@@ -369,7 +369,6 @@ for _, user := range users {
 
 Interfaces are used to define how a specific item should look and can include specific methods which must exists for the type as well.
 
-
 Here is one example of using an Interface; notice the inline comments to follow best practices
 
 It is a best practice to pass a reference to the methods/functions using the interface thus requiring each of those methods of functions to use a receiver.
@@ -379,37 +378,408 @@ package main
 
 import "fmt"
 
-type Animal interface {
-	Says() string
-	NumberOfLegs() int
+type Animal interface { // define the interface and the required methods to conform
+  Says() string
+  NumberOfLegs() int
 }
 
-type Dog struct {
-	Name  string
-	Breed string
+type Dog struct { // create a new type, which later, will need to be coded to support the interface
+  Name  string
+  Breed string
 }
 
-func main() {
-	dog := Dog{
-		Name:  "Samson",
-		Breed: "German Shepherd",
-	}
+func main() { // create a new var using the type
+  dog := Dog{
+    Name:  "Samson",
+    Breed: "German Shepherd",
+  }
 
-	PrintInfo(&dog) // best practice to use a reference and pass this to the receiver
+  PrintInfo(&dog) // best practice to use a reference and pass this to the receiver
 
 }
 
 func PrintInfo(a Animal) {
-	fmt.Println("This animal says", a.Says(), "and has", a.NumberOfLegs(), "legs")
+  fmt.Println("This animal says", a.Says(), "and has", a.NumberOfLegs(), "legs")
 }
 
+// add the supported methods to the type to satisfy the interface
 func (d *Dog) Says() string { // should use a receiver
-	return "Woof!"
+  return "Woof!"
 }
 func (d *Dog) NumberOfLegs() int { // should use a receiver
-	return 4
+  return 4
 }
 ```
 
 In order for something to implement an interface, it must...
 Implement the same functions as the interface in questions
+
+### Packages
+
+Creating custom packages;
+
+Run `go mod init github.com/tpeterson66/myniceprogram` which creates a `go.mod` file in the project directory.
+
+#### go.mod
+
+```go
+module github.com/tpeterson66/myniceprogram
+
+go 1.19
+```
+
+#### Main file
+
+```go
+package main
+
+import (
+  "github.com/tpeterson66/myniceprogram/helpers"
+  "log"
+)
+
+func main() {
+  log.Println("Hello World!")
+
+  var myVar helpers.SomeType
+  myVar.TypeName = "SomeTypeName"
+  log.Println(myVar.TypeName)
+}
+```
+
+#### helpers/helpers.go
+
+```go
+package helpers
+
+type SomeType struct {
+  TypeName string
+  TyperNumber int
+}
+```
+
+### Channels
+
+Used for passing information from package to another. Need more details and notes here:
+<https://go.dev/tour/concurrency/2>
+
+#### main.go
+
+```go
+package main
+
+import (
+  "log"
+  "github.com/tpeterson66/myniceprogram/helpers"
+)
+
+const numberPool = 20 // const value
+
+func CalculateValue(intChan chan int) {
+  randomNumber := helpers.RandomNumber(numberPool) // calling the RandomNumber function from helpers
+  intChan <- randomNumber // send random number to channel
+}
+
+func main() {
+  intChan := make(chan int) // channel that can only hold int(s)
+  defer close(intChan) // when finished running, close the channel
+
+  go CalculateValue(intChan) // fire off a new go routine (concurrent) passing the intChan channel
+
+  num := <-intChan // wait for a response to the channel 
+  log.Println(num) // print it out
+}
+```
+
+#### helpers.go
+
+```go
+package helpers
+
+import (
+  "math/rand"
+  "time"
+)
+
+func RandomNumber(n int) int { // new function expecting an int and returning an int
+  rand.Seed(time.Now().UnixMicro()) // seed the random function
+  value := rand.Intn(n) // create random value
+  return value // return it
+}
+```
+
+### Reading and Writting JSON
+
+```go
+package main
+
+import (
+  "encoding/json"
+  "fmt"
+  "log"
+)
+
+// created to match json elements to a struct property
+type Person struct {
+  First_name string `json:"first_name"`
+  Last_name  string `json:"last_name"`
+  Hair_color string `json:"hair_color"`
+  Has_dog    bool   `json:"has_dog"`
+}
+
+func main() {
+  // Sample JSON, array of objects...
+  myJson := `
+  [
+    {
+      "first_name": "Peter",
+      "last_name": "Griffin",
+      "hair_color": "black",
+      "has_dog": true
+    },
+    {
+      "first_name": "Lois",
+      "last_name": "Griffin",
+      "hair_color": "red",
+      "has_dog": false
+    }
+  ]`
+
+  // unmarshalled = data before conversion
+  var unmarshalled []Person
+
+  // use json.Unmarshal to convert the json to a struct, requires a type to be defined and a variable w/ the type of the struct
+  err := json.Unmarshal([]byte(myJson), &unmarshalled)
+
+  if err != nil { // check for errors
+    log.Println("Error unmarshalling json", err) // log error is present
+  }
+
+  log.Printf("unmarshalled: %v", unmarshalled) // print json struct to screen
+
+  // write JSON from a struct
+
+  var mySlice []Person // create a new slice of data to form the array of the JSON
+
+  // add some structs to the array...
+  var m1 Person
+  m1.First_name = "Wally"
+  m1.Last_name = "West"
+  m1.Hair_color = "red"
+  m1.Has_dog = false
+
+  mySlice = append(mySlice, m1)
+
+  var m2 Person
+  m2.First_name = "Diana"
+  m2.Last_name = "Prince"
+  m2.Hair_color = "black"
+  m2.Has_dog = false
+
+  mySlice = append(mySlice, m2)
+
+  // convert the slice to json using json.MarshalIndent. MarshalIndent prints a formatted value vs. a full string
+  newJson, err := json.MarshalIndent(mySlice, "", "    ")
+  if err != nil { // check for error
+    log.Println("error marshalling", err)
+  }
+
+  fmt.Println(string(newJson)) // print the value of the formatted JSON value
+}
+```
+
+### Writting Tests in Go
+
+
+Export the results of the tests to html to see test coverage using `go test -coverprofile=coverage.out && go tool cover -html=coverage.out`
+
+```go
+package main
+
+import "testing" // built in package
+
+func TestDivide(t *testing.T) {
+  _, err := divide(10.0, 1.0)
+  if err != nil {
+    t.Error("Got an error when we should not have...")
+  }
+}
+func TestBadDivide(t *testing.T) {
+  _, err := divide(10.0, 0)
+  if err == nil {
+    t.Error("Did not get an error when we should've gotten an error!")
+  }
+}
+```
+
+```go
+// table test
+
+var tests = []struct {
+  name     string
+  dividend float32
+  divisor  float32
+  expected float32
+  isErr    bool
+}{
+  {"valid-data", 100.0, 10.0, 10.0, false},
+  {"invalid-data", 100.0, 0.0, 0.0, true},
+}
+
+func TestDivision(t *testing.T) {
+  for _, tt := range tests {
+    got, err := divide(tt.dividend, tt.divisor)
+    if tt.isErr {
+      if err == nil {
+      t.Error("expected an error, did not get one...")
+    }
+    } else {
+      if err != nil {
+        t.Error("Did not expect an error, but got one...")
+      }
+    }
+
+    if got != tt.expected {
+      t.Errorf("Expected %f but got %f", tt.expected, got)
+    }
+  }
+}
+```
+
+### Standard HTTP Listener
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	// handle http requests/responses
+	// new function using net/http.HandleFunc which takes a path:string, Response Writter, and a pointer to the request (not the actual request...)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		n, err := fmt.Fprintf(w, "Hello World") // fmt.Fprintf - takes the writter (w in this case) and the value we want to write, hello world in this example. Returns the number of bytes written and an error.
+		if err != nil { // check for no errors, if error, print err - need better error handling
+			fmt.Println(err)
+		}
+
+		fmt.Println(fmt.Sprintf("Number of bytes written: %d", n)) // print the output to the console for a log.
+	})
+	// start the server on 4001
+	_ = http.ListenAndServe(":4001", nil) // returns an error, using the _ up front ignores the output.
+}
+```
+
+### Working with Templates and Local Caching
+
+Simple example rendering templates, which requires some files to get started...
+
+#### base.layout.tmpl
+
+```go
+{{define "base"}} // define the type of template, this is a base template, or base index.html
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    {{block "css" .}} // define a block for custom css
+    {{end}}
+  </head>
+  <body>
+   {{block "content" .}} // define a block for dynamic content
+   {{end}}
+
+   {{block "js" .}} // define a block for custom js.
+   {{end}}
+  </body>
+  </html>
+{{end}}
+```
+#### home.page.tmpl
+```go
+{{template "base" .}} // call the layout template which will be used
+
+{{define "content"}} // provide data for the content block
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>This is the home page</h1>
+        <p>This is some text...</p>
+      </div>
+    </div>
+  </div>
+{{end}}
+```
+
+### Rendering Templates
+
+```go
+// RenderTemplate renders templates using html/template
+func RenderTemplateTest(w http.ResponseWriter, tmpl string) {
+	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl, "./templates/base.layout.tmpl") // calls in the files required to render the template
+	err := parsedTemplate.Execute(w, nil) // parse the template calling the execute function, write to the response writer the results or capture the error.
+	if err != nil { // error checking...
+		fmt.Println("error parsing template", err)
+		return
+	}
+}
+```
+
+### Rendering Templates with a Local Cache
+
+```go
+
+// variable to hold the template cache
+var tc = make(map[string]*template.Template) // create a map of templates using the template pointer
+
+func RenderTemplate(w http.ResponseWriter, t string) { // function taking in the writer and the template
+	var tmpl *template.Template // var ref to template
+	var err error // var for any errors
+
+	// check to see if we already have the template in cache
+	_, inMap := tc[t] // check if template is in cache
+	if !inMap { // if the template is in cache, inMap will be true, else, false
+		// need to create template, template is not in map.
+		log.Println("creating template and adding to cache")
+		err = createTemplateCache(t) // call the function to create the template and push template to map
+		if err != nil { // error handling
+			log.Println(err)
+		}
+		
+	} else {
+		// we have the template in the cache
+		log.Println("using cached template")
+	}
+
+	tmpl = tc[t] // update the tmpl variable pointer for the response
+	err = tmpl.Execute(w, nil) // execute the template and send response to response writer
+	if err != nil { // error handling
+		log.Println(err)
+	}
+}
+
+func createTemplateCache(t string) error {
+	templates := []string{ // used to pass multiple values to ParseFiles, need an entry for every layout going to be used.
+		fmt.Sprintf("./templates/%s", t),
+		"./templates/base.layout.tmpl",
+	}
+	// parse the template
+	tmpl, err := template.ParseFiles(templates...) // parse the templates using layouts and template files
+
+	if err != nil { // error handling
+		return err
+	}
+
+	// add template to cache
+	tc[t] = tmpl // push update template to map
+
+	return nil // return no errors if completed successfully
+}
+```
