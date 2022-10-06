@@ -31,5 +31,5 @@ jobs:
           push: true
           # context: .
             # platforms: linux/amd64,linux/arm64
-          file: /docker_images/palo_alto_ansible/Dockerfile
+          file: /docker_images/devops/Dockerfile
           tags: tpeterson66/devops:${{ github.run_id }}, tpeterson66/devops:latest
