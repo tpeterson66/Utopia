@@ -73,6 +73,7 @@ RUN curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform
 RUN tar -xzf terraform-docs.tar.gz
 RUN chmod +x terraform-docs
 RUN mv terraform-docs /usr/local/bin/terraform-docs
+RUN rm terraform-docs.tar.gz
 
 # Install tflint - https://github.com/terraform-linters/tflint
 RUN wget -nv -O tflint.key https://raw.githubusercontent.com/terraform-linters/tflint/master/8CE69160EB3F2FE9.key \
