@@ -68,11 +68,12 @@ RUN checkov --version
 #     # smoke tests
 #     && terraform-docs --version
 
-RUN curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz \
-    tar -xzf terraform-docs.tar.gz \
-    chmod +x terraform-docs \
-    mv terraform-docs /usr/local/terraform-docs \
-    && terraform-docs --version
+# Terraform-docs
+RUN curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+RUN tar -xzf terraform-docs.tar.gz
+RUN chmod +x terraform-docs
+RUN mv terraform-docs /usr/local/terraform-docs
+RUN terraform-docs --version
 
 
 
