@@ -2,7 +2,7 @@ name: Docker_Images--devops
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "tpeterson66/ansible" ]
     paths:
       - 'docker_images/devops/**'
   # pull_request:
