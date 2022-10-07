@@ -1,0 +1,7 @@
+mode: set
+github.com/tpeterson66/myniceprogram/main.go:8.13,10.16 2 0
+github.com/tpeterson66/myniceprogram/main.go:15.2,15.56 1 0
+github.com/tpeterson66/myniceprogram/main.go:10.16,13.3 2 0
+github.com/tpeterson66/myniceprogram/main.go:18.44,21.12 2 1
+github.com/tpeterson66/myniceprogram/main.go:25.2,26.20 2 1
+github.com/tpeterson66/myniceprogram/main.go:21.12,23.3 1 1
