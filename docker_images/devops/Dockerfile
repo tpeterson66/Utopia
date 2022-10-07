@@ -59,14 +59,21 @@ RUN pip install --no-cache-dir checkov==${BUILD_CHECKOV_VERSION}
 RUN checkov --version
 
 # Install terraform-docs - https://github.com/terraform-docs/terraform-docs
-RUN wget -nv -O terraform-docs https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64 \
-    && wget -nv -O terraform-docs.sha256 https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}.sha256sum \
-    && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64)" terraform-docs.sha256) terraform-docs | sha256sum -c \
-    && chmod +x terraform-docs \
-    && mv terraform-docs /usr/local/bin/terraform-docs \
-    && rm -f terraform-docs.sha256 \
-    # smoke tests
-    && terraform-docs --version
+# RUN wget -nv -O terraform-docs https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64 \
+#     && wget -nv -O terraform-docs.sha256 https://github.com/terraform-docs/terraform-docs/releases/download/v${BUILD_TERRAFORMDOCS_VERSION}/terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}.sha256sum \
+#     && echo $(grep -Po "[[:xdigit:]]{64}(?=\s+terraform-docs-v${BUILD_TERRAFORMDOCS_VERSION}-linux-amd64)" terraform-docs.sha256) terraform-docs | sha256sum -c \
+#     && chmod +x terraform-docs \
+#     && mv terraform-docs /usr/local/bin/terraform-docs \
+#     && rm -f terraform-docs.sha256 \
+#     # smoke tests
+#     && terraform-docs --version
+
+# Terraform-docs
+RUN curl -Lo ./terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-amd64.tar.gz
+RUN tar -xzf terraform-docs.tar.gz
+RUN chmod +x terraform-docs
+RUN mv terraform-docs /usr/local/bin/terraform-docs
+RUN rm terraform-docs.tar.gz
 
 # Install tflint - https://github.com/terraform-linters/tflint
 RUN wget -nv -O tflint.key https://raw.githubusercontent.com/terraform-linters/tflint/master/8CE69160EB3F2FE9.key \
@@ -101,7 +108,7 @@ RUN wget -nv -O opa https://github.com/open-policy-agent/opa/releases/download/v
     && opa version
 
 # Terraform version 1.3.2
-RUN curl https://releases.hashicorp.com/terraform/1.3.2/terraform_1.3.2_linux_amd64.zip > /tmp/terraform.zip
+RUN curl https://releases.hashicorp.com/terraform/${BUILD_TERRAFORM_VERSION}/terraform_${BUILD_TERRAFORM_VERSION}_linux_amd64.zip > /tmp/terraform.zip
 RUN command unzip /tmp/terraform.zip -d /usr/local/bin/
 RUN rm -rf /tmp/terraform.zip
 RUN terraform --version
@@ -112,7 +119,6 @@ RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packa
 RUN echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
 RUN apt-get update
 RUN apt-get install -y kubectl
-RUN kubectl --version
 
 
 # WORKDIR /azp

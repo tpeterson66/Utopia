@@ -1,0 +1,36 @@
+name: Docker_Images--devops
+
+on:
+  push:
+    branches: [ "main", "ansible" ]
+    paths:
+      - 'docker_images/devops/**'
+      - '.github/workflows/devops.yml'
+  # pull_request:
+  #   branches: [ "main" ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          # context: .
+            # platforms: linux/amd64,linux/arm64
+          file: /docker_images/devops/Dockerfile
+          tags: tpeterson66/devops:${{ github.run_id }}, tpeterson66/devops:latest

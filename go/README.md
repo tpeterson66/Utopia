@@ -86,21 +86,21 @@ Using types can reduce the number of variables required for your application. Th
 
 ```go
 type User struct {
-	FirstName   string
-	LastName    string
-	PhoneNumber string
-	Age         int
-	BirthDate time.Time
+  FirstName   string
+  LastName    string
+  PhoneNumber string
+  Age         int
+  BirthDate time.Time
 }
 
 // Calling the user type to create a variable
-	user := User {
-		FirstName: "Peter",
-		LastName: "Griffin",
-		PhoneNumber: "555-123-1234",
-		Age: 44,
-		// BirthDate time.Time
-	}
+user := User {
+  FirstName: "Peter",
+  LastName: "Griffin",
+  PhoneNumber: "555-123-1234",
+  Age: 44,
+  // BirthDate time.Time
+}
 
   // call the values using user.FirstName, user.LastName, etc.
   // if value is not defined, it returns null or default value, in the case of time.Time
@@ -138,8 +138,8 @@ log.Println("After func call myString is set to: ", myString) // print the value
 }
 
 func changeUsingPointer(s *string) { // expect a pointer to a string variable and reference it as s.
-	newValue := "Red" // store a new value as a variable in this function, could be anything
-	*s = newValue // update the pointer which was passed to the function w/ the new value
+newValue := "Red" // store a new value as a variable in this function, could be anything
+*s = newValue // update the pointer which was passed to the function w/ the new value
 }
 
 ```
@@ -156,22 +156,22 @@ package main
 import "log"
 
 type myStruct struct { // create a new type of struct
-	FirstName string
+  FirstName string
 }
 
 
 // add a reciver to a function (m *myStruct) attaching this function to the type. This does not require an argument, just uses a pointer to the current type or variable and references the data there.
 func (m *myStruct) printFirstName() string { 
-	return m.FirstName
+  return m.FirstName
 }
 
 func main() {
-	var myVar myStruct // declare variable of type myStruct
-	myVar.FirstName = "Peter" // set first name
+  var myVar myStruct // declare variable of type myStruct
+  myVar.FirstName = "Peter" // set first name
 
-	myVar2 := myStruct{ // declare a new var and set the value shorthand
-		FirstName: "Lois",
-	}
+  myVar2 := myStruct{ // declare a new var and set the value shorthand
+    FirstName: "Lois",
+  }
 
 
 	log.Println("myVar is set to: ", myVar.printFirstName() ) // call the function attached to the type to print the first name
@@ -643,5 +643,143 @@ func TestDivision(t *testing.T) {
       t.Errorf("Expected %f but got %f", tt.expected, got)
     }
   }
+}
+```
+
+### Standard HTTP Listener
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func main() {
+	// handle http requests/responses
+	// new function using net/http.HandleFunc which takes a path:string, Response Writter, and a pointer to the request (not the actual request...)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
+		n, err := fmt.Fprintf(w, "Hello World") // fmt.Fprintf - takes the writter (w in this case) and the value we want to write, hello world in this example. Returns the number of bytes written and an error.
+		if err != nil { // check for no errors, if error, print err - need better error handling
+			fmt.Println(err)
+		}
+
+		fmt.Println(fmt.Sprintf("Number of bytes written: %d", n)) // print the output to the console for a log.
+	})
+	// start the server on 4001
+	_ = http.ListenAndServe(":4001", nil) // returns an error, using the _ up front ignores the output.
+}
+```
+
+### Working with Templates and Local Caching
+
+Simple example rendering templates, which requires some files to get started...
+
+#### base.layout.tmpl
+
+```go
+{{define "base"}} // define the type of template, this is a base template, or base index.html
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    {{block "css" .}} // define a block for custom css
+    {{end}}
+  </head>
+  <body>
+   {{block "content" .}} // define a block for dynamic content
+   {{end}}
+
+   {{block "js" .}} // define a block for custom js.
+   {{end}}
+  </body>
+  </html>
+{{end}}
+```
+#### home.page.tmpl
+```go
+{{template "base" .}} // call the layout template which will be used
+
+{{define "content"}} // provide data for the content block
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>This is the home page</h1>
+        <p>This is some text...</p>
+      </div>
+    </div>
+  </div>
+{{end}}
+```
+
+### Rendering Templates
+
+```go
+// RenderTemplate renders templates using html/template
+func RenderTemplateTest(w http.ResponseWriter, tmpl string) {
+	parsedTemplate, _ := template.ParseFiles("./templates/" + tmpl, "./templates/base.layout.tmpl") // calls in the files required to render the template
+	err := parsedTemplate.Execute(w, nil) // parse the template calling the execute function, write to the response writer the results or capture the error.
+	if err != nil { // error checking...
+		fmt.Println("error parsing template", err)
+		return
+	}
+}
+```
+
+### Rendering Templates with a Local Cache
+
+```go
+
+// variable to hold the template cache
+var tc = make(map[string]*template.Template) // create a map of templates using the template pointer
+
+func RenderTemplate(w http.ResponseWriter, t string) { // function taking in the writer and the template
+	var tmpl *template.Template // var ref to template
+	var err error // var for any errors
+
+	// check to see if we already have the template in cache
+	_, inMap := tc[t] // check if template is in cache
+	if !inMap { // if the template is in cache, inMap will be true, else, false
+		// need to create template, template is not in map.
+		log.Println("creating template and adding to cache")
+		err = createTemplateCache(t) // call the function to create the template and push template to map
+		if err != nil { // error handling
+			log.Println(err)
+		}
+		
+	} else {
+		// we have the template in the cache
+		log.Println("using cached template")
+	}
+
+	tmpl = tc[t] // update the tmpl variable pointer for the response
+	err = tmpl.Execute(w, nil) // execute the template and send response to response writer
+	if err != nil { // error handling
+		log.Println(err)
+	}
+}
+
+func createTemplateCache(t string) error {
+	templates := []string{ // used to pass multiple values to ParseFiles, need an entry for every layout going to be used.
+		fmt.Sprintf("./templates/%s", t),
+		"./templates/base.layout.tmpl",
+	}
+	// parse the template
+	tmpl, err := template.ParseFiles(templates...) // parse the templates using layouts and template files
+
+	if err != nil { // error handling
+		return err
+	}
+
+	// add template to cache
+	tc[t] = tmpl // push update template to map
+
+	return nil // return no errors if completed successfully
 }
 ```
