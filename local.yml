@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
   become: true
+  ansible_user: ubuntu
 
   pre_tasks:
     - name: Load configuration (with defaults from example file).
