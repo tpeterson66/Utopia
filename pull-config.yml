@@ -1,0 +1,31 @@
+---
+# install Docker
+docker: true
+dockercompose: true
+portainer: true
+jenkins: true
+awx: true
+elk: true
+
+# Kubectl
+kubectl: true
+helm: true
+
+# Ansible
+ansible: true
+
+# Terraform
+terraform: true
+infracost: true
+
+# Azure
+azcli: true
+
+# SSL Certificates
+certbot: true
+
+# VPN
+tailscale: true
+
+# Pip Tools
+pip_tools: true

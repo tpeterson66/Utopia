@@ -1,0 +1,46 @@
+---
+- hosts: localhost
+  become: true
+
+  pre_tasks:
+    - name: Load configuration (with defaults from example file).
+      ansible.builtin.include_vars: "{{ item }}"
+      loop:
+        - pull-config.yml
+        # - config.yml
+
+    - name: Ensure apt cache is up to date.
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when:
+        - ansible_facts.os_family == "Debian"
+
+    - name: Ensure pacman cache is up to date
+      community.general.pacman:
+        update_cache: true
+      when:
+        - ansible_facts.os_family == "Archlinux"
+
+  # handlers:
+  #   - name: Include handlers
+  #     ansible.builtin.import_tasks: tasks/handlers.yml
+  tasks:
+    - name: Setup Docker.
+      ansible.builtin.import_tasks: ansible/tasks/docker.yml
+      when: docker == true
+    - name: Setup Portainer.
+      ansible.builtin.import_tasks: ansible/tasks/portainer.yml
+      when: portainer == true
+    - name: Setup Kubectl.
+      ansible.builtin.import_tasks: ansible/tasks/kubectl.yml
+      when: kubectl == true
+    - name: Setup Helm.
+      ansible.builtin.import_tasks: ansible/tasks/helm.yml
+      when: helm == true
+    - name: Setup Azure CLI.
+      ansible.builtin.import_tasks: ansible/tasks/azcli.yml
+      when: azcli == true
+    - name: Pip Tools.
+      ansible.builtin.import_tasks: ansible/tasks/pip_tools.yml
+      when: pip_tools == true
