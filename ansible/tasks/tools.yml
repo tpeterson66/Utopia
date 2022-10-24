@@ -1,0 +1,8 @@
+---
+- name: install apt packages
+    package:
+      name:
+        - htop
+        - tmux
+        - vim-nox
+        - fish

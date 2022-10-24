@@ -1,4 +1,8 @@
 ---
+# set cron to true if you want to automatically pull updates
+cron: true
+apt_tools: true
+
 # install Docker
 docker: true
 dockercompose: true
