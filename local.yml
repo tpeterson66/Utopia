@@ -44,3 +44,9 @@
     - name: Pip Tools.
       ansible.builtin.import_tasks: ansible/tasks/pip_tools.yml
       when: pip_tools == true
+    - name: Apt Tools.
+      ansible.builtin.import_tasks: ansible/tasks/tools.yml
+      when: apt_tools == true
+    - name: Crontab.
+      ansible.builtin.import_tasks: ansible/tasks/cron.yml
+      when: cron == true
