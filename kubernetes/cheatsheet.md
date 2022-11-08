@@ -13,3 +13,7 @@ docker run --rm -it -v ~/.kube/config:/root/.kube/config k9s-docker:0.1
 
 # spinning up test env
 docker run --rm -it -v kube/config:/root/.kube/config 
+
+# New env
+
+docker run --rm -it --name homelab -v /Users/tpeterson/code/homelab/.kube:/root/.kube -v $pwd:/code -v /Users/tpeterson/code/homelab/.azure/:/root/.azure tpeterson66/k8s
