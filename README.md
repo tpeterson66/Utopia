@@ -76,3 +76,20 @@ Kubernetes Stuff:
 Code Scanning
 <https://www.zaproxy.org/docs/desktop/addons/selenium/>
 <https://www.mend.io/>
+
+## Computer Setup
+
+Tools and utilities required to be productive.
+
+* oh-my-zsh
+* starship - https://starship.rs/guide/#%F0%9F%9A%80-installation
+* Kubectl
+* kubecolor
+* tmux
+* az cli
+* datree - container
+* popeye - container
+* checkov - container
+* krew
+* ansible
+kubectl
