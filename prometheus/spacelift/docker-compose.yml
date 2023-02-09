@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  spacelift:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: spacelift
+    environment:
+      - SPACELIFT_POOL_PRIVATE_KEY=$SPACELIFT_POOL_PRIVATE_KEY
+      - SPACELIFT_TOKEN=$SPACELIFT_TOKEN
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/spacelift:/opt/spacelift
+    restart: unless-stopped
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - /home/spacelift/prom/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - prom
+  promex:
+    container_name: promex
+    image: public.ecr.aws/spacelift/promex
+    restart: unless-stopped
+    environment:
+      - SPACELIFT_PROMEX_API_KEY_ID=$SPACELIFT_PROMEX_API_KEY_ID
+      - SPACELIFT_PROMEX_API_KEY_SECRET=$SPACELIFT_PROMEX_API_KEY_SECRET
+      - SPACELIFT_PROMEX_API_ENDPOINT=$SPACELIFT_PROMEX_API_ENDPOINT
+    ports:
+      - 9953:9953
+    networks:
+      - prom
+  grafana:
+    container_name: grafana
+    image: grafana/grafana-oss
+    restart: unless-stopped
+    ports: 
+      - 3000:3000
+    networks:
+      - prom
+
+networks:
+  prom:
